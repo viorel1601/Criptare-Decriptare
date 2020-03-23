@@ -1,0 +1,207 @@
+package main;
+import Encryption.Encryption;
+import Decryption.Decryption;
+import java.util.Scanner;
+/**
+ *
+ * @author Viorel Elefterescu
+ */
+ 
+ public class Encryption {
+    public static void encryption() {
+        Scanner scan = new Scanner(System.in);
+		
+	int x, y; // variables for the style of encryption (+x si -y)        
+       	String password; // the password or text	       	
+                
+	System.out.println("*** ENCRYPTION ***\n");	      	
+    
+        System.out.println("***Input text only on one line:");	
+	password = scan.nextLine();   // input the password, only one line        
+        //System.out.println("The text has: " + password.length() + " characters\n" + password + "\n");
+        int pass_crypt[] = new int[password.length()]; // for encrypted password
+                
+        //System.out.println("***Password in ASCII code is: ");
+	for (int i = 0; i < password.length(); i++) {		
+                //System.out.print((int)password.charAt(i) + " ");
+	}
+	System.out.println();
+
+	//input how many element the key has	
+        System.out.println("***How many elements has the key?");	
+        int k = scan.nextInt();  // input the number of elements of the key
+        int key[] = new int[k]; // key variable
+		
+	//input the key from the keyboard	
+        System.out.println("***Input the key: ");
+	for (int i = 0; i < k; i++) {		
+                key[i] = scan.nextInt();
+	}        
+	System.out.println();
+	
+	// input the style of encryption		
+        System.out.println("***Input the style of encryption: ");	
+        x = scan.nextInt();
+        y = scan.nextInt();	
+        //System.out.println("***The style is: +" + x + " and -" + y + "\n");
+        System.out.println();
+        
+	// ASCII code of the password and applying the key and the style of encryption	
+        System.out.println("***The encrypted password / text is: ");
+	int counterZ = 0; // counter for the length of the encrypted password / text
+	int counterKey = 0; // counter for the key
+	while (counterZ < password.length()) {
+		for (int i = 0; i < x; i++) {
+			if (counterZ == password.length()) {
+				break;
+			}
+			if (counterKey == k) {
+				counterKey = 0;
+			}
+			pass_crypt[counterZ] = key[counterKey] + password.charAt(counterZ);
+			counterZ++;
+			counterKey++;
+		}
+		for (int i = 0; i < y; i++) {
+			if (counterZ == password.length()) {
+				break;
+			}
+			if (counterKey == k) {
+				counterKey = 0;
+			}
+			pass_crypt[counterZ] = key[counterKey] - password.charAt(counterZ);
+			counterZ++;
+			counterKey++;
+		}		
+	}
+	// displaying the encrypted password 
+	for (int i = 0; i < password.length(); i++) {		
+                System.out.print(pass_crypt[i] + " ");
+	}	
+        System.out.println("\n");
+    }
+}
+// 1352 2299 3371 4387 1298 2376 3243 1209 2155 3374 1363 2299 3169 4168 1234 2168 3038 974 1957  >> example of encrypted string (style 12 | 50)
+// 1247 2267 3274 4278 1266 2274 3135 1092 2054 3264  >> key example with 10 elements   (this key was used for the string above)
+// 1161 2162 3163 4164 1165 2166 3167   >> key example with 7 elements
+
+public class Decryption {
+    public static void decryption(){
+        Scanner scan = new Scanner(System.in);
+                		
+	int x, y; // variables for the style of encryption
+	
+        System.out.println("*** DECRYPTION ***");
+        System.out.println();
+        
+	// input the encrypted data	
+        System.out.println("***Input the encrypted data: ");
+	String pass_crypt;
+        pass_crypt = scan.nextLine();   
+        
+        int[] password = new int[pass_crypt.length()];
+        int counterPassword = 0, nr = 0;
+        for(int i = 0; i < pass_crypt.length(); i++){         
+            if(pass_crypt.charAt(i) != ' '){
+                nr = nr * 10 + (pass_crypt.charAt(i) - '0') % 10;
+                password[counterPassword] = nr;                
+            }else{
+                counterPassword++;
+                nr = 0;
+            }
+        }
+        counterPassword++;
+	System.out.println();
+        
+	// input from the keyboard how many elements the key has        	
+        System.out.println("***How many elements the key has?");
+	int k = scan.nextInt();  
+        int key[] = new int[k]; // input the key
+	//System.out.println();
+	
+	// input the key	
+        System.out.println("***Input the key: ");
+	for (int i = 0; i < k; i++) {
+		key[i] = scan.nextInt();
+	}
+	System.out.println();
+
+	// input the style of encryption
+        System.out.println("***Input the style of encryption: ");	
+        x = scan.nextInt();
+        y = scan.nextInt();	
+        //System.out.println("***The style of encryption is: +" + x + " and -" + y + "\n");
+
+	// decryption of the password into ASCII code	        
+	int counterZ = 0; // counter for the length of the password
+	int counterKey = 0; // counter of the key
+	while (counterZ < counterPassword) {
+		for (int i = 0; i < x; i++) {
+			if (counterZ == counterPassword) {
+				break;
+			}			
+			if (counterKey == k) {
+				counterKey = 0;
+			}
+			password[counterZ] -= key[counterKey];
+			counterZ++;
+			counterKey++;
+		}
+		for (int i = 0; i < y; i++) {
+			if (counterZ == counterPassword) {
+				break;
+			}			
+			if (counterKey == k) {
+				counterKey = 0;
+			}
+			password[counterZ] = key[counterKey] - password[counterZ];
+			counterZ++;
+			counterKey++;
+		}
+	}
+
+        //System.out.println("***The decrypted password in ASCII code is:");
+	// displaying the password in ASCII code
+	for (int i = 0; i < counterPassword; i++) {		
+                //System.out.print((int)password[i] + " ");
+	}
+	//System.out.println();
+
+	// displaying the decrypted password / text
+        System.out.println("***Decryption >> The password / text is: ");        
+	for (int i = 0; i < counterPassword; i++) {		
+                System.out.print((char)password[i]);                
+	}
+	System.out.println();
+    }
+}
+// 1352 2299 3371 4387 1298 2376 3243 1209 2155 3374 1363 2299 3169 4168 1234 2168 3038 974 1957  >> example of encrypted string (style 12 | 50)
+// 1247 2267 3274 4278 1266 2274 3135 1092 2054 3264  >> key example with 10 elements   (this key was used for the string above)
+// 1161 2162 3163 4164 1165 2166 3167   >> key example with 7 elements
+
+public class Main {
+    public static void main(String[] args){
+        Scanner scan = new Scanner(System.in);
+        
+        System.out.println("*** ENIGMA Encryption / Decryption program ***");	
+        System.out.println("Input E for encryption or D for decryption to begin:");
+	char start = scan.next().charAt(0);	
+        switch (start) {        
+            case 'e':
+                Encryption.encryption();
+                break;
+            case 'E':
+                Encryption.encryption();
+                break;        
+            case 'd':
+                Decryption.decryption();
+                break;
+            case 'D':
+                Decryption.decryption();
+                break;
+            default:                
+                System.out.println("Unavailable option. Please try again.");
+                break;
+        }        
+    }    
+}
